@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "A backend project to learn and practice node+exxpress with mongo DB",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/index.js"
   },
   "keywords": [
     "javascript",
@@ -12,5 +14,8 @@
     "node"
   ],
   "author": "Raunak Raj",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
 }
