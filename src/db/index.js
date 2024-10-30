@@ -7,16 +7,13 @@ const connectDB = async () => {
       `${process.env.MONGODB_URL}/${DB_NAME}`
     );
 
-    console.log(`\nMongoDB connected !! DB HOST: ${connectionInstance.connection.host}`);
-    
-
-    app.listen(process.env.PORT, () => {
-      console.log(`App is listening on port ${process.env.PORT}`);
-    });
+    console.log(
+      `\nMongoDB connected !! DB HOST: ${connectionInstance.connection.host}`
+    );
   } catch (error) {
     console.log("\nMongo DB connection Failed", error);
     process.exit(1);
   }
 };
 
-export default connectDB
+export default connectDB;

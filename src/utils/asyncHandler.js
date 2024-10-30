@@ -4,7 +4,7 @@ const asyncHandler = (requestHandler) => {
   };
 };
 
-/* const asyncHandler = (fnc) => async (req, res, next) => {
+/* const asynHandler = (fnc) => async (req, res, next) => {
   try {
     await fnc(req, res, next);
   } catch (error) {
