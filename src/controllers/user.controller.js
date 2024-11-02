@@ -1,7 +1,10 @@
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import {
+  uploadOnCloudinary,
+  deleteFromCloudinary,
+} from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 
@@ -263,6 +266,91 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, user, "Account Details Updated Successfully."));
 });
 
+const updateUserAvatar = asyncHandler(async (req, res) => {
+  const avatarLocalPath = req.file?.path;
+
+  if (!avatarLocalPath) {
+    throw new ApiError(400, "Avatar is missing.");
+  }
+
+  const avatar = await uploadOnCloudinary(avatarLocalPath);
+
+  if (!avatar.url) {
+    throw new ApiError(400, "Avatar upload failed.");
+  }
+
+  const user = await User.findById(req.user?._id);
+
+  // Delete old avatar if exists
+  if (user.avatar) {
+    const oldAvatarPublicId = user.avatar.split("/").pop().split(".")[0];
+    await deleteFromCloudinary(oldAvatarPublicId);
+  }
+
+  // Update the user with the new avatar
+  user.avatar = avatar.url;
+  await user.save((validateBeforeSave = false));
+  /*  const user = await User.findByIdAndUpdate(
+    req.user?._id,
+    {
+      $set: {
+        avatar: avatar.url,
+      },
+    },
+    {
+      new: true,
+    }
+  ).select("-password"); */
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "User Avatar Updated Successfully."));
+});
+const updateUserCoverImage = asyncHandler(async (req, res) => {
+  const coverImageLocalPath = req.file?.path;
+
+  if (!coverImageLocalPath) {
+    throw new ApiError(400, "Cover Image is missing.");
+  }
+
+  const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+
+  if (!coverImage.url) {
+    throw new ApiError(400, "Cover Image upload failed.");
+  }
+
+  const user = await User.findById(req.user?._id);
+
+  // Delete old avatar if exists
+  if (user.coverImage) {
+    const oldCoverImagePublicId = user.coverImage
+      .split("/")
+      .pop()
+      .split(".")[0];
+    await deleteFromCloudinary(oldCoverImagePublicId);
+  }
+
+  // Update the user with the new avatar
+  user.coverImage = coverImage.url;
+  await user.save((validateBeforeSave = false));
+
+  /*  const user = await User.findByIdAndUpdate(
+    req.user?._id,
+    {
+      $set: {
+        coverImage: coverImage.url,
+      },
+    },
+    {
+      new: true,
+    }
+  ).select("-password"); */
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Cover Image Updated Successfully."));
+});
+
 export {
   registerUser,
   loginUser,
@@ -271,4 +359,6 @@ export {
   changeCurrentPassword,
   getCurrentUser,
   updateAccountDetails,
+  updateUserAvatar,
+  updateUserCoverImage,
 };
