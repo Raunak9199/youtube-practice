@@ -135,7 +135,7 @@ const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
     {
-      $set: { refreshToken: undefined },
+      $set: { refreshToken: 1 }, // this removes the field from document ( 1 is used to unset a value in mongo DB),
     },
     {
       new: true,
@@ -423,8 +423,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
 const getWatchHistory = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
   const objectId = mongoose.Types.ObjectId.isValid(userId)
-    ? //new
-      mongoose.Types.ObjectId(userId)
+    ? new mongoose.Types.ObjectId(userId)
     : null;
 
   if (!objectId) {
